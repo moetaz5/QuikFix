@@ -1,0 +1,133 @@
+/* Fond général */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6; /* gris clair */
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneurs */
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Titres */
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937; /* gris foncé */
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #d1d5db; /* gris clair */
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #3b82f6; /* bleu */
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+/* Boutons */
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button.primary {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+button.primary:hover {
+  background-color: #2563eb;
+}
+
+button.secondary {
+  background-color: #10b981;
+  color: #fff;
+}
+
+button.secondary:hover {
+  background-color: #059669;
+}
+
+button.danger {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+button.danger:hover {
+  background-color: #b91c1c;
+}
+
+/* Messages d'erreur */
+.error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Liens */
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Dashboard */
+.dashboard {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.dashboard .card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.dashboard .card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.dashboard .grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media(min-width: 768px) {
+  .dashboard .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,46 @@
+.profil-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: rgba(30,30,47,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: #faf5f5;
+}
+
+.profil-container h2, .profil-container h3 {
+  text-align: center;
+  color: #f39c12;
+}
+
+.profil-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
+}
+
+.profil-card label {
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.profil-card input {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+.success {
+  color: #2ecc71;
+  text-align: center;
+}
+
+.error {
+  color: #e74c3c;
+  text-align: center;
+}
