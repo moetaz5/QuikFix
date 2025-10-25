@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Edit2,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  Save,
+  X,
+  ToggleLeft,
+  ToggleRight
+} from "lucide-react";
+import "./ServiceAdmin.css";
 
 const ServiceAdmin = () => {
   const [services, setServices] = useState([]);
@@ -24,7 +35,6 @@ const ServiceAdmin = () => {
     fetchServices();
   }, []);
 
-  // ✅ Modifier service
   const handleEdit = async (id) => {
     try {
       await axios.put(
@@ -44,7 +54,6 @@ const ServiceAdmin = () => {
     }
   };
 
-  // 🚫 Activer / Désactiver
   const toggleEtat = async (id, etatActuel) => {
     const nouveauEtat = etatActuel === "actif" ? "inactif" : "actif";
     try {
@@ -54,14 +63,15 @@ const ServiceAdmin = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchServices();
-      setMessage(`✅ Service ${nouveauEtat === "actif" ? "activé" : "désactivé"} avec succès`);
+      setMessage(
+        `✅ Service ${nouveauEtat === "actif" ? "activé" : "désactivé"} avec succès`
+      );
     } catch (err) {
       console.error(err);
       setMessage("Erreur changement d'état");
     }
   };
 
-  // 🗑️ Supprimer
   const handleDelete = async (id) => {
     if (!window.confirm("Voulez-vous vraiment supprimer ce service ?")) return;
 
@@ -78,22 +88,14 @@ const ServiceAdmin = () => {
   };
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "50px auto", padding: "20px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Gestion des Services</h2>
+    <div className="service-admin-container">
+      <h2>Gestion des Services</h2>
 
-      {message && (
-        <p style={{ textAlign: "center", color: "green", fontWeight: "bold" }}>{message}</p>
-      )}
+      {message && <p className="message">{message}</p>}
 
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-        }}
-      >
+      <table className="service-admin-table">
         <thead>
-          <tr style={{ backgroundColor: "#007BFF", color: "white" }}>
+          <tr>
             <th>ID</th>
             <th>Travailleur</th>
             <th>Nom du service</th>
@@ -132,44 +134,37 @@ const ServiceAdmin = () => {
                   service.description
                 )}
               </td>
-              <td
-                style={{
-                  color: service.etat === "actif" ? "green" : "red",
-                  fontWeight: "bold",
-                }}
-              >
+              <td className={`etat ${service.etat}`}>
+                {service.etat === "actif" ? (
+                  <CheckCircle size={18} /> 
+                ) : (
+                  <XCircle size={18} />
+                )}
                 {service.etat}
               </td>
-              <td>
+              <td className="actions">
                 {editService?.id === service.id ? (
                   <>
-                    <button
-                      onClick={() => handleEdit(service.id)}
-                      style={{ marginRight: "5px" }}
-                    >
-                      ✅ Enregistrer
+                    <button onClick={() => handleEdit(service.id)} title="Enregistrer">
+                      <Save size={16} />
                     </button>
-                    <button onClick={() => setEditService(null)}>❌ Annuler</button>
+                    <button onClick={() => setEditService(null)} title="Annuler">
+                      <X size={16} />
+                    </button>
                   </>
                 ) : (
                   <>
-                    <button
-                      onClick={() => setEditService(service)}
-                      style={{ marginRight: "5px" }}
-                    >
-                      ✏️ Modifier
+                    <button onClick={() => setEditService(service)} title="Modifier">
+                      <Edit2 size={16} />
                     </button>
                     <button
                       onClick={() => toggleEtat(service.id, service.etat)}
-                      style={{ marginRight: "5px" }}
+                      title={service.etat === "actif" ? "Désactiver" : "Activer"}
                     >
-                      {service.etat === "actif" ? "🚫 Désactiver" : "✅ Activer"}
+                      {service.etat === "actif" ? <ToggleLeft size={16} /> : <ToggleRight size={16} />}
                     </button>
-                    <button
-                      onClick={() => handleDelete(service.id)}
-                      style={{ color: "red" }}
-                    >
-                      🗑️ Supprimer
+                    <button onClick={() => handleDelete(service.id)} title="Supprimer" className="delete-btn">
+                      <Trash2 size={16} />
                     </button>
                   </>
                 )}

@@ -1,0 +1,66 @@
+.demande-admin-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 20px;
+  background: rgba(30,30,47,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: #faf5f5;
+}
+
+.demande-admin-container h2 {
+  text-align: center;
+  color: #f39c12;
+  margin-bottom: 20px;
+}
+
+.demande-message {
+  text-align: center;
+  color: #ccc;
+  font-weight: bold;
+}
+
+.demande-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.demande-admin-table th,
+.demande-admin-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.demande-admin-table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.etat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.etat-acceptee {
+  color: #2ecc71;
+}
+
+.etat-refusee {
+  color: #e74c3c;
+}
+
+.etat-enattente {
+  color: #f39c12;
+}
+
+.etat-select {
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}

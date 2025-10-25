@@ -1,0 +1,62 @@
+.demande-container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+  background: rgba(30, 30, 47, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: #faf5f5;
+}
+
+.demande-container h2 {
+  text-align: center;
+  color: #f39c12;
+  margin-bottom: 20px;
+}
+
+.demande-message {
+  text-align: center;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+.demande-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
+}
+
+.demande-table th, .demande-table td {
+  padding: 12px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: left;
+}
+
+.demande-table th {
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+}
+
+.demande-table tbody tr:hover {
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.demande-etat {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.etat-acceptee {
+  color: #2ecc71;
+}
+
+.etat-refusee {
+  color: #e74c3c;
+}
+
+.etat-enattente {
+  color: #f39c12;
+}

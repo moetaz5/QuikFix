@@ -28,7 +28,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-wrapper">
-      {/* Sidebar */}
+      {/* 🔹 Sidebar */}
       <aside className="sidebar">
         <div className="logo">
           <span className="brand">QuickFix</span>
@@ -36,25 +36,27 @@ const Dashboard = () => {
         </div>
 
         <ul className="nav-menu">
+          {/* 🔸 CLIENT */}
           {role === "client" && (
             <>
               <li><Link to="/dashboard/accueil"><Home size={18}/> Accueil</Link></li>
               <li><Link to="/dashboard/ServiceClient"><Wrench size={18}/> Services</Link></li>
-              <li><Link to="/dashboard/demandes"><FileText size={18}/> Mes Demandes</Link></li>
-              <li><Link to="/dashboard/messagerie"><MessageSquare size={18}/> Messagerie</Link></li>
+              <li><Link to="/dashboard/demandeclient"><FileText size={18}/> Mes Demandes</Link></li>
+              <li><Link to="/dashboard/ConversationsList"><MessageSquare size={18}/> Messagerie</Link></li>
               <li><Link to="/dashboard/paiement"><CreditCard size={18}/> Paiement</Link></li>
               <li><Link to="/dashboard/historique"><Inbox size={18}/> Historique</Link></li>
               <li><Link to="/dashboard/profil"><User size={18}/> Profil</Link></li>
             </>
           )}
 
+          {/* 🔸 TRAVAILLEUR */}
           {role === "travailleur" && (
             <>
               <li><Link to="/dashboard/accueil"><Home size={18}/> Accueil</Link></li>
               <li><Link to="/dashboard/ServiceTravailleur"><Wrench size={18}/> Mes Services</Link></li>
-              <li><Link to="/dashboard/AjouterService"><Wrench size={18}/> Ajouter un service</Link></li>
-              <li><Link to="/dashboard/demandes-recues"><Inbox size={18}/> Demandes Reçues</Link></li>
-              <li><Link to="/dashboard/messagerie"><MessageSquare size={18}/> Messagerie</Link></li>
+              <li><Link to="/dashboard/ajouterservice"><Wrench size={18}/> Ajouter un service</Link></li>
+              <li><Link to="/dashboard/DemandeTravailleur"><Inbox size={18}/> Demandes Reçues</Link></li>
+              <li><Link to="/dashboard/ConversationsList"><MessageSquare size={18}/> Messagerie</Link></li>
               <li><Link to="/dashboard/mes-travaux"><FileText size={18}/> Mes Travaux</Link></li>
               <li><Link to="/dashboard/paiements"><CreditCard size={18}/> Paiements</Link></li>
               <li><Link to="/dashboard/avis"><Star size={18}/> Avis</Link></li>
@@ -62,11 +64,12 @@ const Dashboard = () => {
             </>
           )}
 
+          {/* 🔸 ADMIN */}
           {role === "admin" && (
             <>
               <li><Link to="/dashboard/utilisateurs"><Users size={18}/> Utilisateurs</Link></li>
-              <li><Link to="/dashboard/ServiceAdmin"><Wrench size={18}/> Gestion Des Services</Link></li>
-              <li><Link to="/dashboard/demandes"><Inbox size={18}/> Demandes</Link></li>
+              <li><Link to="/dashboard/ServiceAdmin"><Wrench size={18}/> Gestion des Services</Link></li>
+              <li><Link to="/dashboard/DemandeAdmin"><Inbox size={18}/> Gestion Des Demandes</Link></li>
               <li><Link to="/dashboard/paiements"><CreditCard size={18}/> Paiements</Link></li>
               <li><Link to="/dashboard/statistiques"><BarChart2 size={18}/> Statistiques</Link></li>
               <li><Link to="/dashboard/notifications"><Bell size={18}/> Notifications</Link></li>
@@ -81,7 +84,7 @@ const Dashboard = () => {
         </button>
       </aside>
 
-      {/* Contenu principal */}
+      {/* 🔹 Contenu principal */}
       <main className="main-content">
         <header className="top-bar glass-top-bar">
           <div className="top-links">
@@ -97,6 +100,7 @@ const Dashboard = () => {
           </div>
         </header>
 
+        {/* ✅ Ici s’affichent toutes les pages enfants (ServiceClient, Demande, etc.) */}
         <div className="content-container">
           <Outlet />
         </div>

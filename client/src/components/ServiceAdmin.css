@@ -1,0 +1,83 @@
+.service-admin-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 20px;
+  background: rgba(30,30,47,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: #faf5f5;
+}
+
+.service-admin-container h2 {
+  text-align: center;
+  color: #f39c12;
+  margin-bottom: 20px;
+}
+
+.message {
+  text-align: center;
+  color: #2ecc71;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.service-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.service-admin-table th,
+.service-admin-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.service-admin-table th {
+  background-color: #007bff57;
+  color: white;
+}
+
+.etat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.etat.actif {
+  color: #2ecc71;
+}
+
+.etat.inactif {
+  color: #e74c3c;
+}
+
+.actions button {
+  margin-right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #f39c12;
+  transition: color 0.2s;
+}
+
+.actions button:hover {
+  color: #ffd97d;
+}
+
+.actions .delete-btn {
+  color: #e74c3c;
+}
+
+.actions .delete-btn:hover {
+  color: #ff7f7f;
+}
+
+input, textarea {
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+}

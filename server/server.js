@@ -308,6 +308,250 @@ app.delete("/admin/services/:id", authenticateToken, (req, res) => {
     res.json({ message: "🗑️ Service supprimé avec succès" });
   });
 });
+// 📨 Ajouter une demande (client -> travailleur)
+app.post("/demande", authenticateToken, (req, res) => {
+  if (req.user.role !== "client") {
+    return res.status(403).json({ message: "Accès réservé aux clients" });
+  }
+
+  const { id_service } = req.body;
+
+  // 🔍 Récupérer les infos du service
+  db.query("SELECT * FROM service WHERE id = ?", [id_service], (err, result) => {
+    if (err || result.length === 0) {
+      console.error("Erreur récupération service :", err);
+      return res.status(404).json({ message: "Service introuvable" });
+    }
+
+    const service = result[0];
+    const id_client = req.user.userId;
+
+    // 🔍 Récupérer le nom du client
+    db.query("SELECT name FROM users WHERE id = ?", [id_client], (err, result2) => {
+      if (err) return res.status(500).json({ message: "Erreur client" });
+      const nom_client = result2[0].name;
+
+      const sql = `
+        INSERT INTO demande (id_client, id_travailleur, id_service, nom_client, nom_travailleur, telephone_travailleur, nomservice, description)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      db.query(
+        sql,
+        [
+          id_client,
+          service.id_travailleur,
+          service.id,
+          nom_client,
+          service.nom_travailleur,
+          null, // téléphone à récupérer ensuite
+          service.nomservice,
+          service.description,
+        ],
+        (err3) => {
+          if (err3) {
+            console.error("Erreur ajout demande :", err3);
+            return res.status(500).json({ message: "Erreur serveur" });
+          }
+
+          res.json({ message: "✅ Demande envoyée avec succès" });
+        }
+      );
+    });
+  });
+});
+// 📋 Récupérer les demandes du client connecté
+app.get("/mesdemandes", authenticateToken, (req, res) => {
+  if (req.user.role !== "client") {
+    return res.status(403).json({ message: "Accès réservé aux clients" });
+  }
+
+  const id_client = req.user.userId;
+  db.query("SELECT * FROM demande WHERE id_client = ? ORDER BY created_at DESC", [id_client], (err, result) => {
+    if (err) return res.status(500).json({ message: "Erreur serveur" });
+    res.json(result);
+  });
+});
+// 📋 Récupérer les demandes reçues par un travailleur
+app.get("/travailleur/demandes", authenticateToken, (req, res) => {
+  if (req.user.role !== "travailleur") {
+    return res.status(403).json({ message: "Accès réservé aux travailleurs" });
+  }
+
+  const id_travailleur = req.user.userId;
+  db.query("SELECT * FROM demande WHERE id_travailleur = ?", [id_travailleur], (err, result) => {
+    if (err) return res.status(500).json({ message: "Erreur serveur" });
+    res.json(result);
+  });
+});
+// ✅ / 🚫 Accepter ou refuser une demande + création automatique conversation si acceptée
+app.put("/travailleur/demandes/:id", authenticateToken, (req, res) => {
+  if (req.user.role !== "travailleur") {
+    return res.status(403).json({ message: "Accès réservé aux travailleurs" });
+  }
+
+  const { id } = req.params;
+  const { etat } = req.body; // 'acceptee' ou 'refusee'
+
+  // 1️⃣ Mettre à jour l'état de la demande
+  db.query("UPDATE demande SET etat = ? WHERE id = ?", [etat, id], (err) => {
+    if (err) return res.status(500).json({ message: "Erreur serveur" });
+
+    // Si la demande est acceptée, créer une conversation
+    if (etat === "acceptee") {
+  db.query("SELECT * FROM demande WHERE id = ?", [id], (err2, result) => {
+    if (err2 || result.length === 0) {
+      return res.status(500).json({ message: "Erreur récupération demande" });
+    }
+
+    const demande = result[0];
+    const clientId = demande.id_client;
+    const travailleurId = req.user.userId;
+    const serviceId = demande.id_service;
+
+    // Vérifier si une conversation existe déjà
+    db.query(
+      "SELECT id FROM conversation WHERE service_id = ? AND client_id = ?",
+      [serviceId, clientId],
+      (err3, convResult) => {
+        if (err3) return console.error(err3);
+
+        if (convResult.length === 0) {
+          // Créer conversation
+          db.query(
+            "INSERT INTO conversation (service_id, client_id) VALUES (?, ?)",
+            [serviceId, clientId],
+            (err4, insertResult) => {
+              if (err4) return console.error(err4);
+
+              const conversationId = insertResult.insertId;
+
+              // Ajouter les participants
+              db.query(
+                "INSERT INTO conversation_participants (conversation_id, user_id) VALUES (?, ?), (?, ?)",
+                [conversationId, clientId, conversationId, travailleurId]
+              );
+
+              // 🔥 Message automatique
+              const message = `✅ Votre demande de service "${demande.nomservice}" a été acceptée. Vous pouvez discuter avec ${demande.nom_travailleur}.`;
+              db.query(
+                "INSERT INTO messages (conversation_id, sender_id, content) VALUES (?, ?, ?)",
+                [conversationId, travailleurId, message]
+              );
+            }
+          );
+        }
+      }
+    );
+  });
+}
+
+    // Réponse finale
+    res.json({ message: `Demande ${etat} avec succès` });
+  });
+});
+//recuprer les duscution
+// ✅ Récupérer les conversations de l'utilisateur (client ou travailleur)
+// ✅ Récupérer les conversations de l'utilisateur (client ou travailleur)
+app.get("/conversations", authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+
+  const sql = `
+    SELECT 
+      c.id, 
+      c.service_id, 
+      s.nomservice,
+      u1.name AS client_name, 
+      u2.name AS travailleur_name
+    FROM conversation c
+    JOIN service s ON c.service_id = s.id
+    JOIN users u1 ON c.client_id = u1.id
+    JOIN users u2 ON s.id_travailleur = u2.id
+    JOIN conversation_participants cp ON cp.conversation_id = c.id
+    WHERE cp.user_id = ?
+    ORDER BY c.created_at DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des conversations :", err);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+
+    // 🔥 Construire un champ combiné "nom_affichage"
+    const formatted = results.map(conv => ({
+      ...conv,
+      nom_affichage: `${conv.nomservice} - ${conv.travailleur_name}`,
+    }));
+
+    res.json(formatted);
+  });
+});
+
+//recuprer les messge
+app.get("/conversations/:id/messages", authenticateToken, (req, res) => {
+  const conversationId = req.params.id;
+  const sql = `
+    SELECT m.id, m.content, m.sender_id, u.name AS sender_name, m.created_at
+    FROM messages m
+    JOIN users u ON m.sender_id = u.id
+    WHERE m.conversation_id = ?
+    ORDER BY m.created_at ASC
+  `;
+  db.query(sql, [conversationId], (err, results) => {
+    if (err) return res.status(500).json({ message: "Erreur serveur" });
+    res.json(results);
+  });
+});
+//pour envoyer message
+app.post("/conversations/:id/messages", authenticateToken, (req, res) => {
+  const conversationId = req.params.id;
+  const { content } = req.body;
+  const senderId = req.user.userId;
+
+  db.query(
+    "INSERT INTO messages (conversation_id, sender_id, content) VALUES (?, ?, ?)",
+    [conversationId, senderId, content],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "Erreur serveur" });
+      res.json({ message: "Message envoyé", messageId: result.insertId });
+    }
+  );
+});
+
+
+// 📋 Récupérer toutes les demandes (admin)
+app.get("/admin/demandes", authenticateToken, (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Accès refusé : réservé à l'admin" });
+  }
+
+  const sql = "SELECT * FROM demande ORDER BY created_at DESC";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Erreur récupération demandes :", err);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+    res.json(results);
+  });
+});
+
+// ✏️ Modifier l'état d'une demande (admin)
+app.put("/admin/demandes/:id", authenticateToken, (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Accès refusé : réservé à l'admin" });
+  }
+
+  const { id } = req.params;
+  const { etat } = req.body; // 'en_attente', 'acceptée', 'refusée'
+
+  db.query("UPDATE demande SET etat = ? WHERE id = ?", [etat, id], (err) => {
+    if (err) {
+      console.error("Erreur modification état demande :", err);
+      return res.status(500).json({ message: "Erreur serveur" });
+    }
+    res.json({ message: `État de la demande modifié en "${etat}"` });
+  });
+});
 
 
 

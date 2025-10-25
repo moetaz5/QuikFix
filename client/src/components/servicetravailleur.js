@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ClipboardList, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import "./ServiceTravailleur.css";
 
 const ServiceTravailleur = () => {
   const [services, setServices] = useState([]);
@@ -34,65 +36,65 @@ const ServiceTravailleur = () => {
     fetchServices();
   }, []);
 
+  const renderEtat = (etat) => {
+    if (etat === "actif") {
+      return (
+        <span className="etat-actif">
+          <CheckCircle size={18} style={{ marginRight: "5px" }} /> Actif
+        </span>
+      );
+    } else if (etat === "inactif") {
+      return (
+        <span className="etat-inactif">
+          <XCircle size={18} style={{ marginRight: "5px" }} /> Inactif
+        </span>
+      );
+    } else {
+      return (
+        <span className="etat-alert">
+          <AlertCircle size={18} style={{ marginRight: "5px" }} /> {etat}
+        </span>
+      );
+    }
+  };
+
   return (
-    <div style={{ maxWidth: "900px", margin: "50px auto", padding: "20px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Mes Services</h2>
+    <div className="service-container">
+      <h2>
+        <ClipboardList size={24} style={{ marginRight: "8px", verticalAlign: "middle" }} />
+        Mes Services
+      </h2>
 
-      {message && <p style={{ textAlign: "center", color: "gray" }}>{message}</p>}
+      {message && <p className="service-message">{message}</p>}
 
-      <div style={{ display: "grid", gap: "20px" }}>
+      <div className="service-grid">
         {services.map((service) => (
           <div
             key={service.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: "10px",
-              padding: "15px",
-              backgroundColor:
-                service.etat === "inactif" ? "#fff0f0" : "#f9f9f9",
-              boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
-            }}
+            className={`service-card ${service.etat === "inactif" ? "inactif" : ""}`}
           >
-            <h3 style={{ margin: "5px 0" }}>{service.nomservice}</h3>
-            <p style={{ margin: "5px 0", color: "#555" }}>
+            <h3>{service.nomservice}</h3>
+            <p>
               <strong>Description :</strong> {service.description}
             </p>
-            <p style={{ margin: "5px 0", color: "#888" }}>
+            <p>
               <strong>Ajouté le :</strong>{" "}
               {new Date(service.created_at).toLocaleDateString("fr-FR")}
             </p>
 
-            {/* 🔴 Message si le service est inactif */}
             {service.etat === "inactif" && (
-              <p
-                style={{
-                  color: "red",
-                  fontWeight: "bold",
-                  marginTop: "10px",
-                  borderTop: "1px solid #ddd",
-                  paddingTop: "8px",
-                }}
-              >
+              <p className="service-alert">
                 ⚠️ Ce service a été désactivé par l’administrateur.
               </p>
             )}
 
-            {/* 🟢 Affichage d’un avis s’il existe */}
             {service.avis && (
-              <p style={{ margin: "5px 0", color: "green" }}>
+              <p className="service-avis">
                 <strong>Avis client :</strong> {service.avis}
               </p>
             )}
 
-            {/* État du service */}
-            <p
-              style={{
-                color: service.etat === "actif" ? "green" : "red",
-                fontWeight: "bold",
-              }}
-            >
-              État : {service.etat}
-            </p>
+            <p className="service-etat">{renderEtat(service.etat)}</p>
           </div>
         ))}
       </div>
